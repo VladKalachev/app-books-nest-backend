@@ -1,40 +1,31 @@
 import { Module } from '@nestjs/common';
-import { AuthorController } from './author/author.controller';
-import { BookController } from './book/book.controller';
-import { GenreController } from './genre/genre.controller';
-import { GoalController } from './goal/goal.controller';
-import { PublishingController } from './publishing/publishing.controller';
-import { UserController } from './user/user.controller';
-import { TokenService } from './token/token.service';
-import { UserService } from './user/user.service';
-import { PublishingService } from './publishing/publishing.service';
-import { MailService } from './mail/mail.service';
-import { GoalService } from './goal/goal.service';
-import { GenreService } from './genre/genre.service';
-import { FileService } from './file/file.service';
-import { BookService } from './book/book.service';
-import { AuthorService } from './author/author.service';
+import { ConfigModule } from '@nestjs/config';
+import { AuthorModule } from './author/author.module';
+import { BookModule } from './book/book.module';
+import { UserModule } from './user/user.module';
+import { TokenModule } from './token/token.module';
+import { MailModule } from './mail/mail.module';
+import { GoalModule } from './goal/goal.module';
+import { FileModule } from './file/file.module';
+import { GenreModule } from './genre/genre.module';
+import { PublishingModule } from './publishing/publishing.module';
+import { TelegramModule } from './telegram/telegram.module';
 
 @Module({
-  imports: [],
-  controllers: [
-    AuthorController,
-    BookController,
-    GenreController,
-    GoalController,
-    PublishingController,
-    UserController,
+  imports: [
+    ConfigModule.forRoot(),
+    AuthorModule,
+    BookModule,
+    UserModule,
+    TokenModule,
+    MailModule,
+    GoalModule,
+    FileModule,
+    GenreModule,
+    PublishingModule,
+    TelegramModule,
   ],
-  providers: [
-    TokenService,
-    UserService,
-    PublishingService,
-    MailService,
-    GoalService,
-    GenreService,
-    FileService,
-    BookService,
-    AuthorService,
-  ],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}
