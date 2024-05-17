@@ -10,6 +10,7 @@ import { FileModule } from './file/file.module';
 import { GenreModule } from './genre/genre.module';
 import { PublishingModule } from './publishing/publishing.module';
 import { TelegramModule } from './telegram/telegram.module';
+import { DatabaseModule } from './database/database.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { TelegramModule } from './telegram/telegram.module';
     GenreModule,
     PublishingModule,
     TelegramModule,
+    DatabaseModule,
   ],
   controllers: [],
   providers: [],
