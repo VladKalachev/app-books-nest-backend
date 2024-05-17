@@ -5,6 +5,15 @@ import { GenreController } from './genre/genre.controller';
 import { GoalController } from './goal/goal.controller';
 import { PublishingController } from './publishing/publishing.controller';
 import { UserController } from './user/user.controller';
+import { TokenService } from './token/token.service';
+import { UserService } from './user/user.service';
+import { PublishingService } from './publishing/publishing.service';
+import { MailService } from './mail/mail.service';
+import { GoalService } from './goal/goal.service';
+import { GenreService } from './genre/genre.service';
+import { FileService } from './file/file.service';
+import { BookService } from './book/book.service';
+import { AuthorService } from './author/author.service';
 
 @Module({
   imports: [],
@@ -16,6 +25,16 @@ import { UserController } from './user/user.controller';
     PublishingController,
     UserController,
   ],
-  providers: [],
+  providers: [
+    TokenService,
+    UserService,
+    PublishingService,
+    MailService,
+    GoalService,
+    GenreService,
+    FileService,
+    BookService,
+    AuthorService,
+  ],
 })
 export class AppModule {}
