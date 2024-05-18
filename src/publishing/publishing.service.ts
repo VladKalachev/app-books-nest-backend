@@ -1,17 +1,44 @@
 import { Injectable } from '@nestjs/common';
 import { DatabaseService } from 'src/database/database.service';
+import { Publishing } from '@prisma/client';
+import { CreatePublishingDto } from './dto/create-publishing.dto';
 
 @Injectable()
 export class PublishingService {
   constructor(private prisma: DatabaseService) {}
 
-  async all() {}
+  async all(): Promise<Publishing[] | null> {
+    return this.prisma.publishing.findMany();
+  }
 
-  async create() {}
+  async create(dto: CreatePublishingDto): Promise<Publishing> {
+    return this.prisma.publishing.create({ data: dto });
+  }
 
-  async remove() {}
+  async findById(id: number): Promise<Publishing | null> {
+    return this.prisma.publishing.findUnique({
+      where: { id },
+    });
+  }
 
-  async one() {}
+  async deleteById(id: number): Promise<Publishing> {
+    const response = await this.findById(id);
+    if (!response) return;
 
-  async update() {}
+    return this.prisma.publishing.delete({
+      where: { id },
+    });
+  }
+
+  async updateById(id: number, dto: CreatePublishingDto) {
+    const response = await this.findById(id);
+    if (!response) return;
+
+    return this.prisma.publishing.update({
+      where: {
+        id,
+      },
+      data: dto,
+    });
+  }
 }
