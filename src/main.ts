@@ -12,6 +12,12 @@ async function bootstrap() {
     .setDescription('REST API for my BookModel App')
     .setVersion('1.0')
     .setBasePath('api')
+    .addTag('Users', 'Пользователи')
+    .addTag('Books', 'Книги')
+    .addTag('Authors', 'Авторы')
+    .addTag('Genres', 'Жанры')
+    .addTag('Publishing', 'Издательства')
+    .addTag('Goals', 'Цели')
     .addBearerAuth()
     .build();
 
