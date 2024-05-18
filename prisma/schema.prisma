@@ -8,55 +8,53 @@ datasource db {
 }
 
 model Books {
-  id Int @default(autoincrement())  @id
-  title String
+  id          Int     @id @default(autoincrement())
+  title       String
   description String
-  genre String
-  fullName String
-  image String
-  year Int
+  genre       String
+  fullName    String
+  image       String
+  year        Int
   numberPages Int
-  publishing Boolean
-  notes String
-  read Boolean
-  buy Boolean
+  publishing  Boolean
+  notes       String
+  read        Boolean
+  buy         Boolean
 }
 
 model Authors {
-  id Int @default(autoincrement())  @id
+  id       Int    @id @default(autoincrement())
   fullName String
 }
 
 model Users {
-  id Int @default(autoincrement()) @id
-  email String
-  password String
-  isActivated Boolean
+  id             Int     @id @default(autoincrement())
+  email          String
+  password       String
+  isActivated    Boolean
   activationLink String
-  isAdmin Boolean
+  isAdmin        Boolean
 }
 
 model Token {
-  id Int @default(autoincrement()) @id
-  refreshToken  String
+  id           Int    @id @default(autoincrement())
+  refreshToken String
 }
 
 model Goals {
-  id Int @default(autoincrement())  @id
-  title String
-  numberPages Int
+  id           Int     @id @default(autoincrement())
+  title        String
+  numberPages  Int
   currentPages Int
-  completed Boolean
+  completed    Boolean
 }
 
 model Publishing {
-  id Int @default(autoincrement())  @id
+  id    Int    @id @default(autoincrement())
   title String
 }
 
 model Genres {
-  id Int @default(autoincrement())  @id
+  id    Int    @id @default(autoincrement())
   title String
 }
-
-

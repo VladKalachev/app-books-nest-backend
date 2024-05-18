@@ -5,5 +5,8 @@
   "cSpell.language": "en,en-US,ru-RU",
   "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
-  "cSpell.words": ["Multytenant"]
+  "cSpell.words": ["Multytenant"],
+  "[prisma]": {
+    "editor.defaultFormatter": "Prisma.prisma"
+  }
 }
