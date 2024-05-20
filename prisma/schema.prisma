@@ -20,11 +20,23 @@ model Books {
   notes       String
   read        Boolean
   buy         Boolean
+
+  Goal         Goals?
+  userId       Int
+  User         Users      @relation(fields: [userId], references: [id])
+  genreId      Int
+  Genre        Genres     @relation(fields: [genreId], references: [id])
+  authorId     Int
+  Author       Authors    @relation(fields: [authorId], references: [id])
+  publishingId Int
+  Publishing   Publishing @relation(fields: [publishingId], references: [id])
 }
 
 model Authors {
   id       Int    @id @default(autoincrement())
   fullName String
+
+  Books Books[]
 }
 
 model Users {
@@ -34,11 +46,18 @@ model Users {
   isActivated    Boolean
   activationLink String
   isAdmin        Boolean
+
+  Token Token?
+  Books Books[]
+  Goals Goals[]
 }
 
 model Token {
   id           Int    @id @default(autoincrement())
   refreshToken String
+
+  userId Int   @unique
+  User   Users @relation(fields: [userId], references: [id])
 }
 
 model Goals {
@@ -47,14 +66,24 @@ model Goals {
   numberPages  Int
   currentPages Int
   completed    Boolean
+
+  bookId Int   @unique
+  Book   Books @relation(fields: [bookId], references: [id])
+
+  userId Int
+  User   Users @relation(fields: [userId], references: [id])
 }
 
 model Publishing {
   id    Int    @id @default(autoincrement())
   title String
+
+  Books Books[]
 }
 
 model Genres {
   id    Int    @id @default(autoincrement())
   title String
+
+  Books Books[]
 }
