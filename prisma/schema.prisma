@@ -41,11 +41,11 @@ model Authors {
 
 model Users {
   id             Int     @id @default(autoincrement())
-  email          String
+  email          String  @unique
   password       String
-  isActivated    Boolean
+  isActivated    Boolean @default(false)
   activationLink String
-  isAdmin        Boolean
+  isAdmin        Boolean @default(false)
 
   Token Token?
   Books Books[]
