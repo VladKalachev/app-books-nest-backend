@@ -4,7 +4,6 @@ import {
   Controller,
   HttpCode,
   Post,
-  UnauthorizedException,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
