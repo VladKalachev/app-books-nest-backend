@@ -5,7 +5,7 @@ export class CreateUserDto {
   password: string;
 }
 
-export class ResponseCreateUserDto {
+export class ResponseUserDto {
   user: Users;
   accessToken: string;
   refreshToken: string;

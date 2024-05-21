@@ -1,10 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 import { Users } from '@prisma/client';
-import { CreateUserDto, ResponseCreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, ResponseUserDto } from './dto/create-user.dto';
 import { hash } from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
 import { DatabaseService } from 'src/database/database.service';
 import { TokenService } from 'src/auth/token/token.service';
+import { INVALID_ACTIVATION_LINK } from './user.constants';
 
 @Injectable()
 export class UserService {
@@ -29,7 +30,7 @@ export class UserService {
     });
   }
 
-  async create(dto: CreateUserDto): Promise<ResponseCreateUserDto> {
+  async create(dto: CreateUserDto): Promise<ResponseUserDto> {
     const hashPassword = await hash(dto.password, 3);
     const activationLink: string = uuidv4();
 
@@ -50,5 +51,25 @@ export class UserService {
 
   async update() {}
 
-  async usersWithBooks() {}
+  async usersWithBooks() {
+    return await this.prisma.users.findMany({
+      include: {
+        Books: true,
+      },
+    });
+  }
+
+  async activate(activationLink: string) {
+    const user = await this.prisma.users.findFirst({
+      where: { activationLink },
+    });
+    if (!user) {
+      throw new BadRequestException(INVALID_ACTIVATION_LINK);
+    }
+
+    await this.prisma.users.update({
+      where: { id: user.id },
+      data: { isActivated: true },
+    });
+  }
 }

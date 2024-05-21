@@ -1,7 +1,17 @@
-import { Controller, Get, NotFoundException, Param } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  NotFoundException,
+  Param,
+  Post,
+  UsePipes,
+  ValidationPipe,
+} from '@nestjs/common';
 import { UserService } from './user.service';
 import { ApiOperation, ApiTags } from '@nestjs/swagger';
 import { USER_NOT_FOUND_ERROR } from './user.constants';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @ApiTags('Users')
 @Controller('users')
@@ -16,9 +26,16 @@ export class UserController {
 
   @Get('usersWithBooks')
   @ApiOperation({ summary: 'Получение Пользователей с Книгами' })
-  async usersWithBooks() {}
+  async usersWithBooks() {
+    return this.userService.usersWithBooks();
+  }
 
-  async create() {}
+  @UsePipes(new ValidationPipe())
+  @Post('create')
+  @ApiOperation({ summary: 'Добавление новое Пользователя' })
+  async create(@Body() dto: CreateUserDto) {
+    return this.userService.create(dto);
+  }
 
   @Get(':id')
   @ApiOperation({ summary: 'Получение Пользователя по id' })

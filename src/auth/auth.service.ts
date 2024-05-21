@@ -4,6 +4,8 @@ import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from './auth.constants';
 import { compare } from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
 import { TokenService } from './token/token.service';
+import { ResponseUserDto } from 'src/user/dto/create-user.dto';
+import { Users } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -23,11 +25,18 @@ export class AuthService {
     if (!isCorrectPassword) {
       throw new UnauthorizedException(WRONG_PASSWORD_ERROR);
     }
+
+    return user;
   }
 
-  async login() {}
+  async login(user: Users): Promise<ResponseUserDto> {
+    const tokens = this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+    return { ...tokens, user };
+  }
 
   async logout(refreshToken: string) {
-    await this.tokenService.removeToken(refreshToken);
+    return await this.tokenService.removeToken(refreshToken);
   }
 }
