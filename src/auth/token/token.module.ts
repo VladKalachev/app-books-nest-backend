@@ -3,10 +3,11 @@ import { TokenService } from './token.service';
 import { JwtModule } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getJWTConfig } from 'src/configs/jwt.config';
+import { DatabaseModule } from 'src/database/database.module';
 
 @Module({
-  controllers: [],
   imports: [
+    DatabaseModule,
     ConfigModule,
     JwtModule.registerAsync({
       imports: [ConfigModule],
@@ -14,6 +15,8 @@ import { getJWTConfig } from 'src/configs/jwt.config';
       useFactory: getJWTConfig,
     }),
   ],
+  controllers: [],
   providers: [TokenService],
+  exports: [TokenService],
 })
 export class TokenModule {}

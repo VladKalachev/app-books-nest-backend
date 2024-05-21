@@ -1,13 +1,17 @@
 import { Injectable } from '@nestjs/common';
-import { DatabaseService } from 'src/database/database.service';
 import { Users } from '@prisma/client';
-import { CreateUserDto } from './dto/create-user.dto';
+import { CreateUserDto, ResponseCreateUserDto } from './dto/create-user.dto';
 import { hash } from 'bcrypt';
 import { v4 as uuidv4 } from 'uuid';
+import { DatabaseService } from 'src/database/database.service';
+import { TokenService } from 'src/auth/token/token.service';
 
 @Injectable()
 export class UserService {
-  constructor(private prisma: DatabaseService) {}
+  constructor(
+    private prisma: DatabaseService,
+    private readonly tokenService: TokenService,
+  ) {}
 
   async all(): Promise<Users[] | null> {
     return this.prisma.users.findMany();
@@ -25,20 +29,26 @@ export class UserService {
     });
   }
 
-  async create(dto: CreateUserDto): Promise<Users> {
+  async create(dto: CreateUserDto): Promise<ResponseCreateUserDto> {
     const hashPassword = await hash(dto.password, 3);
     const activationLink: string = uuidv4();
 
-    const data = {
-      email: dto.email,
-      password: hashPassword,
-      activationLink,
-    };
+    const newUser = await this.prisma.users.create({
+      data: {
+        email: dto.email,
+        password: hashPassword,
+        activationLink,
+      },
+    });
+    const tokens = this.tokenService.generateTokens(newUser);
+    await this.tokenService.saveToken(newUser.id, tokens.refreshToken);
 
-    return this.prisma.users.create({ data });
+    return { ...tokens, user: newUser };
   }
 
   async remove() {}
 
   async update() {}
+
+  async usersWithBooks() {}
 }
