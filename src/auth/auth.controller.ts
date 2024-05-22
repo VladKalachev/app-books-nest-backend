@@ -76,7 +76,9 @@ export class AuthController {
 
   @Get('refresh')
   @ApiOperation({ summary: 'Рефрешь токена' })
-  async refresh() {}
+  async refresh() {
+    // TODO
+  }
 
   @Post('activate/:link')
   @ApiOperation({ summary: 'Активация пользователя по ссылки' })
