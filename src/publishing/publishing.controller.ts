@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { PublishingService } from './publishing.service';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
@@ -25,6 +27,7 @@ export class PublishingController {
     return this.publishingService.all();
   }
 
+  @UsePipes(new ValidationPipe())
   @Post('create')
   @ApiOperation({ summary: 'Добавление новое Издательство' })
   async create(@Body() dto: CreatePublishingDto) {
@@ -50,6 +53,7 @@ export class PublishingController {
     }
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   @ApiOperation({ summary: 'Редактирование Издательства по id' })
   async update(@Param('id') id: number, @Body() dto: CreatePublishingDto) {

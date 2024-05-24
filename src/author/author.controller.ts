@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
@@ -25,6 +27,7 @@ export class AuthorController {
     return this.authorService.all();
   }
 
+  @UsePipes(new ValidationPipe())
   @Post('create')
   @ApiOperation({ summary: 'Добавление нового автора' })
   async create(@Body() dto: CreateAuthorDto) {
@@ -50,6 +53,7 @@ export class AuthorController {
     }
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   @ApiOperation({ summary: 'Редактирование автора по id' })
   async update(@Param('id') id: number, @Body() dto: CreateAuthorDto) {

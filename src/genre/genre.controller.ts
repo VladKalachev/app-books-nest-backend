@@ -7,6 +7,8 @@ import {
   Param,
   Post,
   Put,
+  UsePipes,
+  ValidationPipe,
 } from '@nestjs/common';
 import { GenreService } from './genre.service';
 import { CreateGenreDto } from './dto/create-genre.dto';
@@ -25,6 +27,7 @@ export class GenreController {
     return this.genreService.all();
   }
 
+  @UsePipes(new ValidationPipe())
   @Post('create')
   @ApiOperation({ summary: 'Добавление нового Жанра' })
   async create(@Body() dto: CreateGenreDto) {
@@ -50,6 +53,7 @@ export class GenreController {
     }
   }
 
+  @UsePipes(new ValidationPipe())
   @Put(':id')
   @ApiOperation({ summary: 'Редактирование Жанра по id' })
   async update(@Param('id') id: number, @Body() dto: CreateGenreDto) {

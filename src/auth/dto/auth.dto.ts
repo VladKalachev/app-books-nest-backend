@@ -5,7 +5,6 @@ export class AuthDto {
   email: string;
 
   @IsString()
-  @IsString()
   @MinLength(4, { message: 'Пароль не должен быть меньше 4 символов' })
   @MaxLength(20, { message: 'Пароль должен быть меньше 20 символов' })
   password: string;
