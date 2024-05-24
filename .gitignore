@@ -2,7 +2,8 @@
 /dist
 /node_modules
 /build
-
+/.vscode
+/.vscode/settings.json
 # Logs
 logs
 *.log

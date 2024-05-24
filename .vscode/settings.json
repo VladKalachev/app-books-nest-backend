@@ -3,7 +3,6 @@
   "editor.formatOnSave": true,
   "typescript.tsdk": "node_modules\\typescript\\lib",
   "cSpell.language": "en,en-US,ru-RU",
-  "editor.fontFamily": "Fira Code",
   "editor.fontLigatures": true,
   "cSpell.words": ["Multytenant"],
   "[prisma]": {

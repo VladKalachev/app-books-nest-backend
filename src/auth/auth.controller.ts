@@ -74,10 +74,18 @@ export class AuthController {
     return res.status(200).json(token);
   }
 
-  @Get('refresh')
+  @Post('refresh')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Рефрешь токена' })
-  async refresh() {
-    // TODO
+  async refresh(@Req() req: Request, @Res() res: Response) {
+    const { refreshToken } = req.cookies;
+    const userData = await this.authService.refresh(refreshToken);
+    res.cookie('refreshToken', userData.refreshToken, {
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      secure: true,
+      sameSite: 'none',
+    });
+    return res.json(userData);
   }
 
   @Post('activate/:link')

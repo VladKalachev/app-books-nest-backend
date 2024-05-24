@@ -1,6 +1,14 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import { USER_NOT_FOUND_ERROR, WRONG_PASSWORD_ERROR } from './auth.constants';
+import {
+  TOKEN_NOT_FOUND_ERROR,
+  USER_NOT_FOUND_ERROR,
+  WRONG_PASSWORD_ERROR,
+} from './auth.constants';
 import { compare } from 'bcrypt';
 import { AuthDto } from './dto/auth.dto';
 import { TokenService } from './token/token.service';
@@ -38,5 +46,28 @@ export class AuthService {
 
   async logout(refreshToken: string) {
     return await this.tokenService.removeToken(refreshToken);
+  }
+
+  async refresh(refreshToken: string) {
+    if (!refreshToken) {
+      throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
+    }
+
+    const userData = this.tokenService.validateRefreshToken(refreshToken);
+    const tokenFromDb = await this.tokenService.findToken(refreshToken);
+
+    if (!userData || !tokenFromDb) {
+      throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
+    }
+
+    const user = await this.userService.findById(userData?.id);
+    if (!user) {
+      throw new NotFoundException(USER_NOT_FOUND_ERROR);
+    }
+
+    const tokens = this.tokenService.generateTokens(user);
+    await this.tokenService.saveToken(user.id, tokens.refreshToken);
+
+    return { ...tokens, user };
   }
 }
