@@ -12,9 +12,15 @@ import { PublishingModule } from './publishing/publishing.module';
 import { TelegramModule } from './telegram/telegram.module';
 import { DatabaseModule } from './database/database.module';
 import { AuthModule } from './auth/auth.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '..', 'uploads'),
+      serveRoot: 'api/uploads',
+    }),
     ConfigModule.forRoot(),
     AuthorModule,
     BookModule,

@@ -19,6 +19,7 @@ async function bootstrap() {
     .addTag('Books', 'Книги')
     .addTag('Authors', 'Авторы')
     .addTag('Genres', 'Жанры')
+    .addTag('Files', 'Файлы')
     .addTag('Publishing', 'Издательства')
     .addTag('Goals', 'Цели')
     .addBearerAuth()
