@@ -8,11 +8,18 @@ import {
   Put,
   Query,
   UnauthorizedException,
+  UseGuards,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { TOKEN_NOT_FOUND_ERROR } from 'src/auth/auth.constants';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { TokenService } from 'src/auth/token/token.service';
 import { Cookies } from 'src/decorators/cookies.decorator';
 import { CreateGoalDto } from './dto/create-goal.dto';
@@ -20,7 +27,7 @@ import { GoalService } from './goal.service';
 
 @ApiBearerAuth()
 @ApiTags('Goals')
-@Controller('goal')
+@Controller('goals')
 export class GoalController {
   constructor(
     private readonly goalService: GoalService,
@@ -28,10 +35,12 @@ export class GoalController {
   ) {}
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение всего списка Целей' })
+  @ApiQuery({ name: 'search', required: false })
   async all(
-    @Query('search') search: string,
     @Cookies('refreshToken') refreshToken: string,
+    @Query('search') search?: string,
   ) {
     const userData = this.tokenService.validateRefreshToken(refreshToken);
 
@@ -44,6 +53,7 @@ export class GoalController {
 
   @UsePipes(new ValidationPipe())
   @Post('create')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение всего списка Целей' })
   async create(
     @Body() dto: CreateGoalDto,
@@ -61,12 +71,14 @@ export class GoalController {
   }
 
   @Get(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение Цели по id' })
   async one(@Param('id') id: string) {
     return this.goalService.findById(parseInt(id));
   }
 
   @Delete(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Удаление Цели по id' })
   async remove(@Param('id') id: string) {
     return this.goalService.deleteById(parseInt(id));
@@ -74,12 +86,14 @@ export class GoalController {
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Обновление Цели по id' })
   async update(@Param('id') id: string, @Body() dto: CreateGoalDto) {
     return this.goalService.updateById(parseInt(id), dto);
   }
 
   @Put(':id/completed')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Выполнить цель' })
   async completed(
     @Param('id') id: string,

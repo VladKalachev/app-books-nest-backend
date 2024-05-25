@@ -17,6 +17,6 @@ import { DatabaseModule } from 'src/database/database.module';
   ],
   controllers: [],
   providers: [TokenService],
-  exports: [TokenService],
+  exports: [TokenService, JwtModule],
 })
 export class TokenModule {}

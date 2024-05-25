@@ -13,11 +13,12 @@ import {
   Res,
   UnauthorizedException,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
-import { ApiOperation, ApiTags } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { NextFunction } from 'express';
 import { TokenService } from 'src/auth/token/token.service';
 import { FileService } from 'src/file/file.service';
@@ -28,9 +29,10 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BOOK_NOT_FOUND_ERROR } from './book.constants';
 import { Cookies } from 'src/decorators/cookies.decorator';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @ApiTags('Books')
-@Controller('book')
+@Controller('books')
 export class BookController {
   constructor(
     private readonly bookService: BookService,
@@ -39,17 +41,17 @@ export class BookController {
   ) {}
 
   @Get()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение списка книг у Пользователя' })
+  @ApiQuery({ name: 'search', required: false })
   async all(
-    @Query('search') search: string,
     @Cookies('refreshToken') refreshToken: string,
-    @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
+    @Query('search') search?: string,
   ) {
     try {
-      const userData: any =
-        this.tokenService.validateRefreshToken(refreshToken);
+      const userData = this.tokenService.validateRefreshToken(refreshToken);
       if (!userData) {
         throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
       }
@@ -64,7 +66,8 @@ export class BookController {
   }
 
   @UsePipes(new ValidationPipe())
-  @Post()
+  @Post('create')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Добавление книги в коллекцию у пользователя' })
   @UseInterceptors(FileInterceptor('image'))
   async create(
@@ -97,6 +100,7 @@ export class BookController {
   }
 
   @Get('/:id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение Книги по id' })
   async one(@Param('id') id: number) {
     const book = await this.bookService.findOne(id);
@@ -107,6 +111,7 @@ export class BookController {
   }
 
   @Delete('/:id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Удаление Книги по id' })
   async remove(
     @Param('id') id: number,
@@ -126,6 +131,7 @@ export class BookController {
 
   @UsePipes(new ValidationPipe())
   @Put('/:id')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Обновление Книги по id' })
   @UseInterceptors(FileInterceptor('image'))
   async update(

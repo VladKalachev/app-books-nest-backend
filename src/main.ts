@@ -8,6 +8,12 @@ async function bootstrap() {
 
   app.use(cookieParser());
 
+  app.enableCors({
+    origin: 'http://localhost:5173',
+    methods: 'GET,HEAD,PUT,PATCH,POST,DELETE,OPTIONS',
+    credentials: true,
+  });
+
   app.setGlobalPrefix('api');
 
   const options = new DocumentBuilder()
@@ -15,6 +21,7 @@ async function bootstrap() {
     .setDescription('REST API for my BookModel App')
     .setVersion('1.0')
     .setBasePath('api')
+    .addTag('Auth', 'Авторизация')
     .addTag('Users', 'Пользователи')
     .addTag('Books', 'Книги')
     .addTag('Authors', 'Авторы')

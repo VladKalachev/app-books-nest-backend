@@ -5,6 +5,7 @@ import {
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
 import {
+  TOKEN_NOT_FOUND,
   TOKEN_NOT_FOUND_ERROR,
   USER_NOT_FOUND_ERROR,
   WRONG_PASSWORD_ERROR,
@@ -57,7 +58,7 @@ export class AuthService {
     const tokenFromDb = await this.tokenService.findToken(refreshToken);
 
     if (!userData || !tokenFromDb) {
-      throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
+      throw new UnauthorizedException(TOKEN_NOT_FOUND);
     }
 
     const user = await this.userService.findById(userData?.id);

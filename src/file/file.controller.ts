@@ -6,6 +6,7 @@ import {
   Param,
   Post,
   UploadedFile,
+  UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
@@ -17,6 +18,7 @@ import {
   ApiResponse,
   ApiTags,
 } from '@nestjs/swagger';
+import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { FILE_REQUIRED } from './file.constants';
 import { FileService } from './file.service';
 
@@ -27,6 +29,7 @@ export class FileController {
   constructor(private readonly fileService: FileService) {}
 
   @Post()
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Загрузка файла' })
   @UseInterceptors(FileInterceptor('file'))
   @ApiConsumes('multipart/form-data')
@@ -58,6 +61,7 @@ export class FileController {
   }
 
   @Delete('delete/:fileName')
+  @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Удаление файла' })
   @ApiResponse({
     status: 200,

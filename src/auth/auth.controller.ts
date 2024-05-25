@@ -9,6 +9,7 @@ import {
   UsePipes,
   ValidationPipe,
   Param,
+  Get,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -77,7 +78,7 @@ export class AuthController {
     return res.status(200).json(token);
   }
 
-  @Post('refresh')
+  @Get('refresh')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Рефрешь токена' })
   async refresh(
