@@ -70,4 +70,28 @@ export class GoalService {
       data,
     });
   }
+
+  async completed(id: number, completed: boolean): Promise<Goals> {
+    const goal = await this.prisma.goals.update({
+      where: {
+        id,
+      },
+      data: {
+        completed,
+      },
+    });
+
+    if (goal.bookId) {
+      await this.prisma.books.update({
+        where: {
+          id: goal.bookId,
+        },
+        data: {
+          read: completed,
+        },
+      });
+    }
+
+    return goal;
+  }
 }
