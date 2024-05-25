@@ -6,12 +6,14 @@ import { v4 as uuidv4 } from 'uuid';
 import { DatabaseService } from 'src/database/database.service';
 import { TokenService } from 'src/auth/token/token.service';
 import { INVALID_ACTIVATION_LINK } from './user.constants';
+import { MailService } from 'src/auth/mail/mail.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private prisma: DatabaseService,
     private readonly tokenService: TokenService,
+    private readonly mailService: MailService,
   ) {}
 
   async all(): Promise<Users[] | null> {
@@ -41,6 +43,9 @@ export class UserService {
         activationLink,
       },
     });
+
+    // await this.mailService.sendActivationMail(email, `${process.env.API_URL}/api/activate/${activationLink}`);
+
     const tokens = this.tokenService.generateTokens(newUser);
     await this.tokenService.saveToken(newUser.id, tokens.refreshToken);
 
