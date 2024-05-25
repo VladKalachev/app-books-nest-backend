@@ -8,6 +8,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   Req,
   Res,
   UnauthorizedException,
@@ -26,6 +27,7 @@ import { TOKEN_NOT_FOUND_ERROR } from 'src/auth/auth.constants';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BOOK_NOT_FOUND_ERROR } from './book.constants';
+import { Cookies } from 'src/decorators/cookies.decorator';
 
 @ApiTags('Books')
 @Controller('book')
@@ -39,14 +41,13 @@ export class BookController {
   @Get()
   @ApiOperation({ summary: 'Получение списка книг у Пользователя' })
   async all(
+    @Query('search') search: string,
+    @Cookies('refreshToken') refreshToken: string,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
   ) {
     try {
-      const { refreshToken } = req.cookies;
-      const query = req.query;
-
       const userData: any =
         this.tokenService.validateRefreshToken(refreshToken);
       if (!userData) {
@@ -54,7 +55,7 @@ export class BookController {
       }
       const books = await this.bookService.getAllBooksByUserId(
         userData.id,
-        query,
+        search,
       );
       return res.json(books);
     } catch (e) {
@@ -69,6 +70,7 @@ export class BookController {
   async create(
     @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateBookDto,
+    @Cookies('refreshToken') refreshToken: string,
     @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
@@ -80,7 +82,6 @@ export class BookController {
         fileName = await this.fileService.uploadFile(file);
       }
 
-      const { refreshToken } = req.cookies;
       const userData = this.tokenService.validateRefreshToken(refreshToken);
 
       // TODO перенести в validateRefreshToken
@@ -106,6 +107,7 @@ export class BookController {
   }
 
   @Delete('/:id')
+  @ApiOperation({ summary: 'Удаление Книги по id' })
   async remove(
     @Param('id') id: number,
     @Res() res: Response,
@@ -124,6 +126,7 @@ export class BookController {
 
   @UsePipes(new ValidationPipe())
   @Put('/:id')
+  @ApiOperation({ summary: 'Обновление Книги по id' })
   @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id') id: number,

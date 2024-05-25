@@ -2,7 +2,6 @@ import {
   BadRequestException,
   Body,
   Controller,
-  Get,
   HttpCode,
   Post,
   Res,
@@ -18,6 +17,7 @@ import { AuthDto } from './dto/auth.dto';
 import { ALREADY_REGISTERED_ERROR } from './auth.constants';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
+import { Cookies } from 'src/decorators/cookies.decorator';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -67,8 +67,11 @@ export class AuthController {
   @HttpCode(200)
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Разлогин пользователя' })
-  async logout(@Req() req: Request, @Res() res: Response) {
-    const { refreshToken } = req.cookies;
+  async logout(
+    @Cookies('refreshToken') refreshToken: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const token = await this.authService.logout(refreshToken);
     res.clearCookie('refreshToken');
     return res.status(200).json(token);
@@ -77,8 +80,11 @@ export class AuthController {
   @Post('refresh')
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Рефрешь токена' })
-  async refresh(@Req() req: Request, @Res() res: Response) {
-    const { refreshToken } = req.cookies;
+  async refresh(
+    @Cookies('refreshToken') refreshToken: string,
+    @Req() req: Request,
+    @Res() res: Response,
+  ) {
     const userData = await this.authService.refresh(refreshToken);
     res.cookie('refreshToken', userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,

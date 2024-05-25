@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -23,8 +24,8 @@ export class GenreController {
 
   @Get()
   @ApiOperation({ summary: 'Получение всего списка жанра книг' })
-  async all() {
-    return this.genreService.all();
+  async all(@Query('search') search: string) {
+    return this.genreService.all(search);
   }
 
   @UsePipes(new ValidationPipe())

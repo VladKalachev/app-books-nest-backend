@@ -7,8 +7,15 @@ import { CreateGenreDto } from './dto/create-genre.dto';
 export class GenreService {
   constructor(private prisma: DatabaseService) {}
 
-  async all(): Promise<Genres[] | null> {
-    return this.prisma.genres.findMany();
+  async all(search: string): Promise<Genres[] | null> {
+    return this.prisma.genres.findMany({
+      where: {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+    });
   }
 
   async create(dto: CreateGenreDto): Promise<Genres> {

@@ -7,8 +7,15 @@ import { CreatePublishingDto } from './dto/create-publishing.dto';
 export class PublishingService {
   constructor(private prisma: DatabaseService) {}
 
-  async all(): Promise<Publishing[] | null> {
-    return this.prisma.publishing.findMany();
+  async all(search: string): Promise<Publishing[] | null> {
+    return this.prisma.publishing.findMany({
+      where: {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+    });
   }
 
   async create(dto: CreatePublishingDto): Promise<Publishing> {

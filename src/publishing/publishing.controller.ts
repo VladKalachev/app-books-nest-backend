@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -23,8 +24,8 @@ export class PublishingController {
 
   @Get()
   @ApiOperation({ summary: 'Получение всего списка Издательств' })
-  async all() {
-    return this.publishingService.all();
+  async all(@Query('search') search: string) {
+    return this.publishingService.all(search);
   }
 
   @UsePipes(new ValidationPipe())
