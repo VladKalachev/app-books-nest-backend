@@ -1,15 +1,19 @@
 import { Injectable } from '@nestjs/common';
+import { Books } from '@prisma/client';
 import { DatabaseService } from 'src/database/database.service';
 
 @Injectable()
 export class BookService {
   constructor(private prisma: DatabaseService) {}
 
-  async all() {
+  async all(): Promise<Books[] | null> {
     return await this.prisma.books.findMany();
   }
 
-  async getAllBooksByUserId(userId: number, query: any) {
+  async getAllBooksByUserId(
+    userId: number,
+    query: any,
+  ): Promise<Books[] | null> {
     const { search = '' } = query;
     return await this.prisma.books.findMany({
       where: {
@@ -22,7 +26,7 @@ export class BookService {
     });
   }
 
-  async findOne(id: number) {
+  async findOne(id: number): Promise<Books | null> {
     return await this.prisma.books.findUnique({
       where: {
         id,
@@ -30,7 +34,7 @@ export class BookService {
     });
   }
 
-  async create(data: any, fileName: string) {
+  async create(data: any, fileName: string): Promise<Books> {
     const {
       title,
       description,
@@ -72,8 +76,10 @@ export class BookService {
     });
   }
 
-  async remove(id: number) {
+  async deleteById(id: number): Promise<Books> {
     const book = await this.prisma.books.findUnique({ where: { id } });
+    if (!book) return;
+
     if (book) {
       await this.prisma.books.delete({ where: { id } });
     }
