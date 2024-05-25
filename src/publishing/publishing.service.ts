@@ -7,7 +7,7 @@ import { CreatePublishingDto } from './dto/create-publishing.dto';
 export class PublishingService {
   constructor(private prisma: DatabaseService) {}
 
-  async all(search: string): Promise<Publishing[] | null> {
+  async all(search?: string): Promise<Publishing[] | null> {
     return this.prisma.publishing.findMany({
       where: {
         title: {
