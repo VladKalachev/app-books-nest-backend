@@ -16,7 +16,7 @@ model Books {
   image       String
   year        Int
   numberPages Int
-  publishing  Boolean
+  publishing  String
   notes       String
   read        Boolean
   buy         Boolean
