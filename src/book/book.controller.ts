@@ -92,7 +92,7 @@ export class BookController {
         throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
       }
 
-      const book = await this.bookService.create(dto, fileName);
+      const book = await this.bookService.create(dto, fileName, userData);
       return res.json(book);
     } catch (e) {
       next(e);
@@ -142,7 +142,7 @@ export class BookController {
     @Next() next: NextFunction,
   ) {
     try {
-      let fileName = dto.image;
+      let fileName = 'default.png';
 
       if (file) {
         fileName = await this.fileService.uploadFile(file);

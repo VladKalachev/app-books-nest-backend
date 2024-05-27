@@ -15,11 +15,13 @@ import { AuthModule } from './auth/auth.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
 
+console.log('journ', join(__dirname, '..', 'uploads'));
+
 @Module({
   imports: [
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'uploads'),
-      serveRoot: 'api/uploads',
+      serveRoot: '/api/uploads',
     }),
     ConfigModule.forRoot(),
     AuthorModule,

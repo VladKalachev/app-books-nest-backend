@@ -1,4 +1,4 @@
-import { IsString, IsInt, IsBoolean } from 'class-validator';
+import { IsString, IsInt, IsBoolean, IsOptional } from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
@@ -13,17 +13,18 @@ export class CreateBookDto {
   @IsString()
   fullName: string;
 
-  @IsString()
-  image: string;
+  // @IsString()
+  // image: string;
 
   @IsInt()
-  year: number;
+  @IsOptional()
+  year?: number;
 
   @IsInt()
   numberPages: number;
 
-  @IsBoolean()
-  publishing: boolean;
+  @IsString()
+  publishing: string;
 
   @IsString()
   notes: string;
@@ -35,14 +36,18 @@ export class CreateBookDto {
   buy: boolean;
 
   @IsInt()
-  userId: number;
+  @IsOptional()
+  userId?: number;
 
   @IsInt()
-  genreId: number;
+  @IsOptional()
+  genreId?: number;
 
   @IsInt()
-  authorId: number;
+  @IsOptional()
+  authorId?: number;
 
   @IsInt()
-  publishingId: number;
+  @IsOptional()
+  publishingId?: number;
 }

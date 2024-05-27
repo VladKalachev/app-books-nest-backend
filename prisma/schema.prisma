@@ -14,7 +14,7 @@ model Books {
   genre       String
   fullName    String
   image       String
-  year        Int
+  year        Int?
   numberPages Int
   publishing  String
   notes       String
@@ -23,13 +23,13 @@ model Books {
 
   Goal         Goals?
   userId       Int
-  User         Users      @relation(fields: [userId], references: [id])
-  genreId      Int
-  Genre        Genres     @relation(fields: [genreId], references: [id])
-  authorId     Int
-  Author       Authors    @relation(fields: [authorId], references: [id])
-  publishingId Int
-  Publishing   Publishing @relation(fields: [publishingId], references: [id])
+  User         Users       @relation(fields: [userId], references: [id])
+  genreId      Int?
+  Genre        Genres?     @relation(fields: [genreId], references: [id])
+  authorId     Int?
+  Author       Authors?    @relation(fields: [authorId], references: [id])
+  publishingId Int?
+  Publishing   Publishing? @relation(fields: [publishingId], references: [id])
 }
 
 model Authors {
