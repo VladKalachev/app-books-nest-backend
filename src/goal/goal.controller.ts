@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -26,7 +27,10 @@ import { BookService } from 'src/book/book.service';
 import { Cookies } from 'src/decorators/cookies.decorator';
 import { CreateGoalDto } from './dto/create-goal.dto';
 import { UpdateGoalDto } from './dto/update-goal.dto';
-import { GOAL_ALREADY_EXISTS_ERROR } from './goal.constants';
+import {
+  GOAL_ALREADY_EXISTS_ERROR,
+  GOAL_NOT_FOUND_ERROR,
+} from './goal.constants';
 import { GoalService } from './goal.service';
 
 @ApiBearerAuth()
@@ -74,8 +78,9 @@ export class GoalController {
     const book = await this.bookService.findOne(dto.bookId);
 
     const goal = await this.goalService.findByBookId(book.id);
+
     if (goal) {
-      throw new NotFoundException(GOAL_ALREADY_EXISTS_ERROR);
+      throw new BadRequestException(GOAL_ALREADY_EXISTS_ERROR);
     }
 
     let read = false;
@@ -102,14 +107,23 @@ export class GoalController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение Цели по id' })
   async one(@Param('id') id: string) {
-    return this.goalService.findById(+id);
+    const goal = await this.goalService.findById(+id);
+    if (!goal) {
+      throw new NotFoundException(GOAL_NOT_FOUND_ERROR);
+    }
+    return goal;
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Удаление Цели по id' })
   async remove(@Param('id') id: string) {
-    return this.goalService.deleteById(+id);
+    const deletedGoal = await this.goalService.deleteById(+id);
+    if (!deletedGoal) {
+      throw new NotFoundException(GOAL_NOT_FOUND_ERROR);
+    }
+
+    return deletedGoal;
   }
 
   @UsePipes(new ValidationPipe())
@@ -117,7 +131,11 @@ export class GoalController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Обновление Цели по id' })
   async update(@Param('id') id: string, @Body() dto: UpdateGoalDto) {
-    return this.goalService.updateById(parseInt(id), dto);
+    const updatedGoal = await this.goalService.updateById(parseInt(id), dto);
+    if (!updatedGoal) {
+      throw new NotFoundException(GOAL_NOT_FOUND_ERROR);
+    }
+    return updatedGoal;
   }
 
   @Put(':id/completed')
