@@ -34,11 +34,9 @@ export class BookService {
     });
   }
 
-  async create(
-    data: CreateBookDto,
-    fileName: string,
-    user: Users,
-  ): Promise<Books> {
+  async create(data: CreateBookDto, user: Users): Promise<Books> {
+    const fileName = 'default.png';
+
     return await this.prisma.books.create({
       data: {
         title: data.title,
@@ -58,7 +56,7 @@ export class BookService {
           data.publishingId !== null
             ? { connect: { id: data.publishingId } }
             : undefined,
-        image: fileName,
+        image: data.image ? data.image : fileName,
         fullName: data.fullName,
         genre: data.genre,
         publishing: data.publishing,

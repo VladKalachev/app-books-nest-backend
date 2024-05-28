@@ -9,7 +9,6 @@ import {
   Post,
   Put,
   Query,
-  Req,
   Res,
   UnauthorizedException,
   UploadedFile,
@@ -23,7 +22,7 @@ import { NextFunction } from 'express';
 import { TokenService } from 'src/auth/token/token.service';
 import { FileService } from 'src/file/file.service';
 import { BookService } from './book.service';
-import { Request, Response } from 'express';
+import { Response } from 'express';
 import { TOKEN_NOT_FOUND_ERROR } from 'src/auth/auth.constants';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBookDto } from './dto/create-book.dto';
@@ -69,22 +68,13 @@ export class BookController {
   @Post('create')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Добавление книги в коллекцию у пользователя' })
-  @UseInterceptors(FileInterceptor('image'))
   async create(
-    @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateBookDto,
     @Cookies('refreshToken') refreshToken: string,
-    @Req() req: Request,
     @Res() res: Response,
     @Next() next: NextFunction,
   ) {
     try {
-      let fileName = 'default.png';
-
-      if (file) {
-        fileName = await this.fileService.uploadFile(file);
-      }
-
       const userData = this.tokenService.validateRefreshToken(refreshToken);
 
       // TODO перенести в validateRefreshToken
@@ -92,7 +82,7 @@ export class BookController {
         throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
       }
 
-      const book = await this.bookService.create(dto, fileName, userData);
+      const book = await this.bookService.create(dto, userData);
       return res.json(book);
     } catch (e) {
       next(e);
@@ -103,7 +93,7 @@ export class BookController {
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение Книги по id' })
   async one(@Param('id') id: number) {
-    const book = await this.bookService.findOne(id);
+    const book = await this.bookService.findOne(+id);
     if (!book) {
       throw new NotFoundException(BOOK_NOT_FOUND_ERROR);
     }
@@ -119,7 +109,7 @@ export class BookController {
     @Next() next: NextFunction,
   ) {
     try {
-      const book = await this.bookService.deleteById(id);
+      const book = await this.bookService.deleteById(+id);
       if (book) {
         await this.fileService.deleteFile(book.image);
       }

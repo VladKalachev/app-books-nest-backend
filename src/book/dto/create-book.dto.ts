@@ -1,7 +1,14 @@
-import { IsString, IsInt, IsBoolean, IsOptional } from 'class-validator';
+import {
+  IsString,
+  IsInt,
+  IsBoolean,
+  IsOptional,
+  IsNotEmpty,
+} from 'class-validator';
 
 export class CreateBookDto {
   @IsString()
+  @IsNotEmpty({ message: 'Поле title не может быть пустым' })
   title: string;
 
   @IsString()
@@ -13,8 +20,9 @@ export class CreateBookDto {
   @IsString()
   fullName: string;
 
-  // @IsString()
-  // image: string;
+  @IsString()
+  @IsOptional()
+  image?: string;
 
   @IsInt()
   @IsOptional()
