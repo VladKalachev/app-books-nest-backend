@@ -7,6 +7,7 @@ import {
   Param,
   Post,
   Put,
+  Query,
   UseGuards,
   UsePipes,
   ValidationPipe,
@@ -14,7 +15,12 @@ import {
 import { AuthorService } from './author.service';
 import { CreateAuthorDto } from './dto/create-author.dto';
 import { AUTHOR_NOT_FOUND_ERROR } from './author.constants';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 
 @ApiBearerAuth()
@@ -26,8 +32,9 @@ export class AuthorController {
   @Get()
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение всего списка авторов книг' })
-  async all() {
-    return this.authorService.all();
+  @ApiQuery({ name: 'search', required: false })
+  async all(@Query('search') search?: string) {
+    return this.authorService.all(search);
   }
 
   @UsePipes(new ValidationPipe())

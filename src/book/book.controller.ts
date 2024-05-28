@@ -11,9 +11,7 @@ import {
   Query,
   Res,
   UnauthorizedException,
-  UploadedFile,
   UseGuards,
-  UseInterceptors,
   UsePipes,
   ValidationPipe,
 } from '@nestjs/common';
@@ -24,7 +22,6 @@ import { FileService } from 'src/file/file.service';
 import { BookService } from './book.service';
 import { Response } from 'express';
 import { TOKEN_NOT_FOUND_ERROR } from 'src/auth/auth.constants';
-import { FileInterceptor } from '@nestjs/platform-express';
 import { CreateBookDto } from './dto/create-book.dto';
 import { BOOK_NOT_FOUND_ERROR } from './book.constants';
 import { Cookies } from 'src/decorators/cookies.decorator';
@@ -109,8 +106,9 @@ export class BookController {
     @Next() next: NextFunction,
   ) {
     try {
+      const fileName = 'default.png';
       const book = await this.bookService.deleteById(+id);
-      if (book) {
+      if (book && book.image !== fileName) {
         await this.fileService.deleteFile(book.image);
       }
       res.json(true);
@@ -123,22 +121,14 @@ export class BookController {
   @Put('/:id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Обновление Книги по id' })
-  @UseInterceptors(FileInterceptor('image'))
   async update(
     @Param('id') id: number,
-    @UploadedFile() file: Express.Multer.File,
     @Body() dto: CreateBookDto,
     @Res() res: Response,
     @Next() next: NextFunction,
   ) {
     try {
-      let fileName = 'default.png';
-
-      if (file) {
-        fileName = await this.fileService.uploadFile(file);
-      }
-
-      const book = await this.bookService.update(id, dto, fileName);
+      const book = await this.bookService.update(+id, dto);
 
       return res.json(book);
     } catch (e) {

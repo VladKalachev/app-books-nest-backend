@@ -75,43 +75,33 @@ export class BookService {
     return book;
   }
 
-  async update(id: number, data: any, fileName: string) {
-    const {
-      title,
-      description,
-      genre,
-      fullName,
-      year,
-      numberPages,
-      publishing,
-      notes,
-      read,
-      buy,
-      authorId,
-      genreId,
-      publishingId,
-    } = data;
+  async update(id: number, data: CreateBookDto) {
+    const fileName = 'default.png';
 
     return await this.prisma.books.update({
       where: { id },
       data: {
-        title,
-        description,
-        genre,
-        fullName,
-        image: fileName,
-        year: read === 'true' ? year : null,
-        numberPages:
-          numberPages.split('"').length > 1
-            ? Number(numberPages.split('"')[1])
-            : numberPages,
-        publishing,
-        notes,
-        read,
-        buy,
-        authorId,
-        genreId,
-        publishingId,
+        title: data.title,
+        description: data.description,
+        genre: data.genre,
+        fullName: data.fullName,
+        Author:
+          data.authorId !== null
+            ? { connect: { id: data.authorId } }
+            : undefined,
+        Genre:
+          data.genreId !== null ? { connect: { id: data.genreId } } : undefined,
+        Publishing:
+          data.publishingId !== null
+            ? { connect: { id: data.publishingId } }
+            : undefined,
+        image: data.image ? data.image : fileName,
+        year: data.read === true ? data.year : null,
+        numberPages: data.numberPages,
+        publishing: data.publishing,
+        notes: data.notes,
+        read: data.read,
+        buy: data.buy,
       },
     });
   }

@@ -7,8 +7,15 @@ import { CreateAuthorDto } from './dto/create-author.dto';
 export class AuthorService {
   constructor(private prisma: DatabaseService) {}
 
-  async all(): Promise<Authors[] | null> {
-    return this.prisma.authors.findMany();
+  async all(search?: string): Promise<Authors[] | null> {
+    return this.prisma.authors.findMany({
+      where: {
+        fullName: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+    });
   }
 
   async create(dto: CreateAuthorDto): Promise<Authors> {
