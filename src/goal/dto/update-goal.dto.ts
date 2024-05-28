@@ -1,6 +1,6 @@
 import { IsString, IsInt, IsBoolean, IsOptional } from 'class-validator';
 
-export class CreateGoalDto {
+export class UpdateGoalDto {
   @IsString()
   title: string;
 
@@ -16,6 +16,7 @@ export class CreateGoalDto {
   completed: boolean;
 
   @IsInt()
+  @IsOptional()
   bookId: number;
 
   @IsInt()

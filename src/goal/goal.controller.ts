@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -21,8 +22,11 @@ import {
 import { TOKEN_NOT_FOUND_ERROR } from 'src/auth/auth.constants';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
 import { TokenService } from 'src/auth/token/token.service';
+import { BookService } from 'src/book/book.service';
 import { Cookies } from 'src/decorators/cookies.decorator';
 import { CreateGoalDto } from './dto/create-goal.dto';
+import { UpdateGoalDto } from './dto/update-goal.dto';
+import { GOAL_ALREADY_EXISTS_ERROR } from './goal.constants';
 import { GoalService } from './goal.service';
 
 @ApiBearerAuth()
@@ -32,6 +36,7 @@ export class GoalController {
   constructor(
     private readonly goalService: GoalService,
     private readonly tokenService: TokenService,
+    private readonly bookService: BookService,
   ) {}
 
   @Get()
@@ -66,29 +71,52 @@ export class GoalController {
       throw new UnauthorizedException(TOKEN_NOT_FOUND_ERROR);
     }
 
-    dto.userId = userData.id;
-    return this.goalService.create(dto);
+    const book = await this.bookService.findOne(dto.bookId);
+
+    const goal = await this.goalService.findByBookId(book.id);
+    if (goal) {
+      throw new NotFoundException(GOAL_ALREADY_EXISTS_ERROR);
+    }
+
+    let read = false;
+    let numberPages = 0;
+
+    if (book !== null) {
+      read = book.read;
+      numberPages = book?.numberPages;
+    } else {
+      read = dto.completed;
+    }
+
+    return this.goalService.create({
+      title: dto.title,
+      completed: read,
+      bookId: dto.bookId,
+      userId: userData.id,
+      currentPages: dto.currentPages ? dto.currentPages : 0,
+      numberPages,
+    });
   }
 
   @Get(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Получение Цели по id' })
   async one(@Param('id') id: string) {
-    return this.goalService.findById(parseInt(id));
+    return this.goalService.findById(+id);
   }
 
   @Delete(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Удаление Цели по id' })
   async remove(@Param('id') id: string) {
-    return this.goalService.deleteById(parseInt(id));
+    return this.goalService.deleteById(+id);
   }
 
   @UsePipes(new ValidationPipe())
   @Put(':id')
   @UseGuards(AuthGuard)
   @ApiOperation({ summary: 'Обновление Цели по id' })
-  async update(@Param('id') id: string, @Body() dto: CreateGoalDto) {
+  async update(@Param('id') id: string, @Body() dto: UpdateGoalDto) {
     return this.goalService.updateById(parseInt(id), dto);
   }
 

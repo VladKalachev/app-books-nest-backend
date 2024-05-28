@@ -10,5 +10,6 @@ import { ConfigModule } from '@nestjs/config';
   controllers: [BookController],
   imports: [DatabaseModule, FileModule, TokenModule, ConfigModule],
   providers: [BookService],
+  exports: [BookService],
 })
 export class BookModule {}

@@ -41,12 +41,17 @@ export class GoalService {
   }
 
   async findById(id: number): Promise<Goals | null> {
-    const response = await this.findById(id);
-    if (!response) return;
-
     return this.prisma.goals.findUnique({
       where: {
         id,
+      },
+    });
+  }
+
+  async findByBookId(bookId: number) {
+    return this.prisma.goals.findUnique({
+      where: {
+        bookId,
       },
     });
   }
