@@ -4,6 +4,7 @@ import { TelegrafModule } from 'nestjs-telegraf';
 import * as LocalSession from 'telegraf-session-local';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getTelegramConfig } from 'src/configs/telegram.config';
+import { TelegramUpdate } from './telegram.update';
 
 const sessions = new LocalSession({ database: 'session_db.json' });
 
@@ -21,6 +22,6 @@ const sessions = new LocalSession({ database: 'session_db.json' });
       },
     }),
   ],
-  providers: [TelegramService],
+  providers: [TelegramService, TelegramUpdate],
 })
 export class TelegramModule {}
