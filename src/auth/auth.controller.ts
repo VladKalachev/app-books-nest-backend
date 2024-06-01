@@ -67,6 +67,7 @@ export class AuthController {
     this.telegramUpdate.sendMessage(
       `Пользователь ${userData.user.email} авторизовался`,
     );
+    this.telegramUpdate.setUserToken(userData);
 
     return res.json(userData);
   }
