@@ -26,6 +26,7 @@ import { CreateBookDto } from './dto/create-book.dto';
 import { BOOK_NOT_FOUND_ERROR } from './book.constants';
 import { Cookies } from 'src/decorators/cookies.decorator';
 import { AuthGuard } from 'src/auth/guards/auth.guard';
+import { TelegramUpdate } from 'src/telegram/telegram.update';
 
 @ApiTags('Books')
 @Controller('books')
@@ -34,6 +35,7 @@ export class BookController {
     private readonly bookService: BookService,
     private readonly fileService: FileService,
     private readonly tokenService: TokenService,
+    private readonly telegramUpdate: TelegramUpdate,
   ) {}
 
   @Get()
@@ -80,6 +82,10 @@ export class BookController {
       }
 
       const book = await this.bookService.create(dto, userData);
+
+      this.telegramUpdate.sendMessage(
+        `Добавлена новая книга ${book.title}: ${book.description}`,
+      );
       return res.json(book);
     } catch (e) {
       next(e);

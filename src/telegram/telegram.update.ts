@@ -17,12 +17,16 @@ import {
 import { Context } from './telegram.interface';
 import { TelegramService } from './telegram.service';
 import { showBooks } from './telegram.utils';
+import { ConfigService } from '@nestjs/config';
 
 @Update()
 export class TelegramUpdate {
+  chatId: any;
+
   constructor(
     @InjectBot() private readonly bot: Telegraf<Context>,
     private readonly telegramService: TelegramService,
+    private readonly configService: ConfigService,
   ) {
     this.bot.telegram.setMyCommands([
       {
@@ -30,6 +34,8 @@ export class TelegramUpdate {
         description: 'Запустить бота',
       },
     ]);
+
+    this.chatId = this.bot.command;
   }
 
   @Start()
@@ -68,5 +74,10 @@ export class TelegramUpdate {
     if (ctx.session.type === 'create') {
       console.log('create book');
     }
+  }
+
+  async sendMessage(message: string) {
+    const chatId = this.configService.get<string>('CHAT_ID');
+    await this.bot.telegram.sendMessage(chatId, message);
   }
 }

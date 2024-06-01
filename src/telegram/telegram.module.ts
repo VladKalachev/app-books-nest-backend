@@ -12,6 +12,7 @@ const sessions = new LocalSession({ database: 'session_db.json' });
 @Module({
   controllers: [],
   imports: [
+    ConfigModule,
     DatabaseModule,
     TelegrafModule.forRootAsync({
       imports: [ConfigModule.forRoot()],
@@ -25,5 +26,6 @@ const sessions = new LocalSession({ database: 'session_db.json' });
     }),
   ],
   providers: [TelegramService, TelegramUpdate],
+  exports: [TelegramUpdate],
 })
 export class TelegramModule {}

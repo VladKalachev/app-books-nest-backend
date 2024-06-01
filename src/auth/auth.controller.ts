@@ -19,6 +19,7 @@ import { ALREADY_REGISTERED_ERROR } from './auth.constants';
 import { Request, Response } from 'express';
 import { ConfigService } from '@nestjs/config';
 import { Cookies } from 'src/decorators/cookies.decorator';
+import { TelegramUpdate } from 'src/telegram/telegram.update';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -27,6 +28,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly configService: ConfigService,
+    private readonly telegramUpdate: TelegramUpdate,
   ) {}
 
   @UsePipes(new ValidationPipe())
@@ -61,6 +63,11 @@ export class AuthController {
       secure: true,
       sameSite: 'none',
     });
+
+    this.telegramUpdate.sendMessage(
+      `Пользователь ${userData.user.email} авторизовался`,
+    );
+
     return res.json(userData);
   }
 
