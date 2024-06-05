@@ -19,7 +19,7 @@ export class TokenService {
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: this.configService.get<string>('JWT_REFRESH_SECRET'),
-      expiresIn: '30m',
+      expiresIn: '30d',
     });
     return {
       accessToken,

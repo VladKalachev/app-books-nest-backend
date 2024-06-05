@@ -45,6 +45,7 @@ export class AuthController {
     res.cookie('refreshToken', userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
       httpOnly: true,
+      secure: true,
       sameSite: 'none',
     });
     return res.json(userData);
@@ -60,6 +61,7 @@ export class AuthController {
 
     res.cookie('refreshToken', userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
       secure: true,
       sameSite: 'none',
     });
@@ -97,6 +99,7 @@ export class AuthController {
     const userData = await this.authService.refresh(refreshToken);
     res.cookie('refreshToken', userData.refreshToken, {
       maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
       secure: true,
       sameSite: 'none',
     });
